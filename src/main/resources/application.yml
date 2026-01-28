@@ -1,0 +1,34 @@
+spring:
+  application:
+    name: acervo-api
+  
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/acervodb}
+    username: ${DB_USERNAME:seplag}
+    password: ${DB_PASSWORD:Seplag@123}
+    driver-class-name: org.postgresql.Driver
+  
+  jpa:
+    hibernate:
+      ddl-auto: validate # flyway
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+
+minio:
+  endpoint: ${MINIO_ENDPOINT:http://localhost:9000}
+  access-key: ${MINIO_ACCESS_KEY:minioadmin}
+  secret-key: ${MINIO_SECRET_KEY:minioadmin}
+  bucket-name: ${MINIO_BUCKET_NAME:acervo-covers}
+
+logging:
+  level:
+    org.springframework.web: INFO
+    org.hibernate: INFO
+    com.acervo.api: DEBUG
