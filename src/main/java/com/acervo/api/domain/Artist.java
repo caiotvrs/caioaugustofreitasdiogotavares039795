@@ -42,9 +42,3 @@ public class Artist {
     @Builder.Default
     private Set<Album> albums = new HashSet<>();
 }
-
-enum ArtistType {
-    SOLO,
-    DUO,
-    BAND
-}
