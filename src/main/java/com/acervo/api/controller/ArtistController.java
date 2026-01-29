@@ -19,14 +19,13 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/v1/artistas")
 @RequiredArgsConstructor
-@Tag(name = "Artistas", description = "Endpoints para gerenciamento de Artistas")
+@Tag(name = "Artistas", description = "Endpoints para gerenciar artistas")
 public class ArtistController {
 
     private final ArtistService service;
 
     @GetMapping
-    @Operation(summary = "Listar artistas", description = "Listar artistas com filtros opcionais e ordenação. Retorna todos se nenhuma página for informada.")
-    @ApiResponse(responseCode = "200", description = "Sucesso")
+    @Operation(summary = "Listar artistas", description = "Retorna uma lista paginada de artistas, filtrando por nome e tipo.")
     public Page<ArtistResponseDTO> findAll(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) ArtistType type,
@@ -46,16 +45,16 @@ public class ArtistController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "Criar artista")
-    @ApiResponse(responseCode = "201", description = "Criado")
+    @Operation(summary = "Criar artista", description = "Cria um novo artista.")
+    @ApiResponse(responseCode = "201", description = "Criado com sucesso")
     @ApiResponse(responseCode = "400", description = "Dados inválidos")
     public ArtistResponseDTO create(@RequestBody @Valid ArtistRequestDTO dto) {
         return service.create(dto);
     }
 
     @PutMapping("/{id}")
-    @Operation(summary = "Atualizar artista")
-    @ApiResponse(responseCode = "200", description = "Atualizado")
+    @Operation(summary = "Atualizar artista", description = "Atualiza os dados de um artista existente.")
+    @ApiResponse(responseCode = "200", description = "Atualizado com sucesso")
     @ApiResponse(responseCode = "404", description = "Artista não encontrado")
     public ArtistResponseDTO update(@PathVariable Long id, @RequestBody @Valid ArtistRequestDTO dto) {
         return service.update(id, dto);

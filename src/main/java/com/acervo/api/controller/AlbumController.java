@@ -21,14 +21,13 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/v1/albuns")
 @RequiredArgsConstructor
-@Tag(name = "Álbuns", description = "Endpoints para gerenciamento de Álbuns")
+@Tag(name = "Álbuns", description = "Endpoints para gerenciar álbuns")
 public class AlbumController {
 
     private final AlbumService service;
 
     @GetMapping
-    @Operation(summary = "Listar álbuns", description = "Listar álbuns com paginação e filtros. Retorna todos se nenhuma página for informada.")
-    @ApiResponse(responseCode = "200", description = "Sucesso")
+    @Operation(summary = "Listar álbuns", description = "Retorna uma lista paginada de álbuns, com filtros opcionais.")
     public Page<AlbumResponseDTO> findAll(
             @RequestParam(required = false) String artistName,
             @RequestParam(required = false) ArtistType artistType,
@@ -57,18 +56,20 @@ public class AlbumController {
     }
 
     @PutMapping("/{id}")
-    @Operation(summary = "Atualizar álbum")
+    @Operation(summary = "Atualizar álbum", description = "Atualiza os dados de um álbum existente.")
     @ApiResponse(responseCode = "200", description = "Atualizado")
-    @ApiResponse(responseCode = "404", description = "Álbum não encontrado")
+    @ApiResponse(responseCode = "404", description = "Não encontrado")
     public AlbumResponseDTO update(@PathVariable Long id, @RequestBody @Valid AlbumRequestDTO dto) {
         return service.update(id, dto);
     }
 
     @PatchMapping(value = "/{id}/capa", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @Operation(summary = "Upload da capa do álbum")
+    @Operation(summary = "Upload de capa", description = "Faz upload da capa do álbum.")
     @ApiResponse(responseCode = "200", description = "Capa atualizada")
     @ApiResponse(responseCode = "404", description = "Álbum não encontrado")
-    public AlbumResponseDTO uploadCover(@PathVariable Long id, @RequestParam("file") MultipartFile file) {
+    public AlbumResponseDTO uploadCover(
+            @PathVariable Long id,
+            @RequestParam("file") MultipartFile file) {
         return service.uploadCover(id, file);
     }
 }

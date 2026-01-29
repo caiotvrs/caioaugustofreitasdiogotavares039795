@@ -1,7 +1,6 @@
 package com.acervo.api.mapper;
 
 import com.acervo.api.domain.Album;
-import com.acervo.api.domain.Artist;
 import com.acervo.api.dto.AlbumRequestDTO;
 import com.acervo.api.dto.AlbumResponseDTO;
 import com.acervo.api.dto.ArtistResponseDTO;
@@ -26,7 +25,7 @@ public class AlbumMapper {
         return Album.builder()
                 .title(dto.getTitle())
                 .year(dto.getYear())
-                // Artists relations are handled in the service
+                // As relações de artistas são tratadas no service
                 .build();
     }
 
@@ -53,6 +52,6 @@ public class AlbumMapper {
 
         entity.setTitle(dto.getTitle());
         entity.setYear(dto.getYear());
-        // Artists relations are updated in the service
+        // As relações de artistas são atualizadas no service
     }
 }

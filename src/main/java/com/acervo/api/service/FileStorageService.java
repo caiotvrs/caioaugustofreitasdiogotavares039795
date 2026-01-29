@@ -27,15 +27,16 @@ public class FileStorageService {
   public String upload(MultipartFile file, String folder) {
     try {
       String filename = UUID.randomUUID().toString() + "-" + file.getOriginalFilename();
-      // evitar erros de barra dupla
+      // Garante que o nome do objeto não comece com barra para evitar erros de barra
+      // dupla
       String objectName = folder + "/" + filename;
 
-      // caso exista
+      // Criação preguiçosa (Lazy): verifica se o bucket existe
       boolean found = minioClient.bucketExists(io.minio.BucketExistsArgs.builder().bucket(bucketName).build());
       if (!found) {
         minioClient.makeBucket(io.minio.MakeBucketArgs.builder().bucket(bucketName).build());
 
-        // R public
+        // Permite leitura pública
         String policy = """
             {
               "Version": "2012-10-17",
@@ -62,9 +63,12 @@ public class FileStorageService {
                 .contentType(file.getContentType())
                 .build());
       }
+
       // Retorna URL pública acessível pelo navegador (localhost)
-      // em prod deve mudar a var de ambiente
-      return endpoint + bucketName + "/" + objectName;
+      // Usando localhost:9000 assumindo que o mapeamento de porta é 9000:9000
+      // Se estiver rodando em produção, isso deve ser configurável via variável de
+      // ambiente
+      return "http://localhost:9000/" + bucketName + "/" + objectName;
     } catch (Exception e) {
       e.printStackTrace(); // Log do stack trace para depuração
       throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
