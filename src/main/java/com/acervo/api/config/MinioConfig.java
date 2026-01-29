@@ -43,7 +43,7 @@ public class MinioConfig {
             MinioClient client = minioClient();
             boolean found = client.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build());
             if (!found) {
-                log.info("sem bucket '{}'. criando...", bucketName);
+                log.info("Bucket '{}' não encontrado. Criando...", bucketName);
                 client.makeBucket(MakeBucketArgs.builder().bucket(bucketName).build());
 
                 // Criando politica de RO
@@ -67,10 +67,11 @@ public class MinioConfig {
                         .build());
                 log.info("Bucket '{}' criado.", bucketName);
             } else {
-                log.info("Bucket '{}' existe", bucketName);
+                log.info("Bucket '{}' existe.", bucketName);
             }
         } catch (Exception e) {
-            log.error("Erro: {}", e.getMessage(), e);
+            log.error("Erro ao inicializar MinIO: {}", e.getMessage(), e);
+            // Falha não bloqueante mas o upload pode falhar. isso aqui é placebo!!!
         }
     }
 }
