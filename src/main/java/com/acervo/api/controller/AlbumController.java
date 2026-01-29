@@ -63,7 +63,7 @@ public class AlbumController {
         return service.update(id, dto);
     }
 
-    @PatchMapping(value = "/{id}/capa", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/{id}/capa", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Upload de capa", description = "Faz upload da capa do álbum.")
     @ApiResponse(responseCode = "200", description = "Capa atualizada")
     @ApiResponse(responseCode = "404", description = "Álbum não encontrado")

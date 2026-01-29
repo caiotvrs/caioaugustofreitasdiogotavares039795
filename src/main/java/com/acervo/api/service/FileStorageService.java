@@ -1,8 +1,12 @@
 package com.acervo.api.service;
 
+import io.minio.GetPresignedObjectUrlArgs;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
+import io.minio.http.Method;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -11,9 +15,11 @@ import org.springframework.http.HttpStatus;
 
 import java.io.InputStream;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class FileStorageService {
 
   private final MinioClient minioClient;
@@ -24,34 +30,38 @@ public class FileStorageService {
   @Value("${minio.endpoint}")
   private String endpoint;
 
+  @Value("${minio.access-key}")
+  private String accessKey;
+
+  @Value("${minio.secret-key}")
+  private String secretKey;
+
+  private MinioClient signerClient;
+
+  @PostConstruct
+  public void initSigner() {
+    log.info("Inicializando MinIO - Endpoint: {}", endpoint);
+    this.signerClient = MinioClient.builder()
+        .endpoint(endpoint)
+        .credentials(accessKey, secretKey)
+        .region("us-east-1")
+        .build();
+  }
+
+  /**
+   * Faz o upload do arquivo e retorna o nome do objeto (chave) salvo.
+   */
   public String upload(MultipartFile file, String folder) {
     try {
       String filename = UUID.randomUUID().toString() + "-" + file.getOriginalFilename();
-      // Garante que o nome do objeto não comece com barra para evitar erros de barra
-      // dupla
       String objectName = folder + "/" + filename;
 
-      // Criação preguiçosa (Lazy): verifica se o bucket existe
-      boolean found = minioClient.bucketExists(io.minio.BucketExistsArgs.builder().bucket(bucketName).build());
-      if (!found) {
-        minioClient.makeBucket(io.minio.MakeBucketArgs.builder().bucket(bucketName).build());
+      boolean found = minioClient.bucketExists(
+          io.minio.BucketExistsArgs.builder().bucket(bucketName).build());
 
-        // Permite leitura pública
-        String policy = """
-            {
-              "Version": "2012-10-17",
-              "Statement": [
-                {
-                  "Effect": "Allow",
-                  "Principal": {"AWS": ["*"]},
-                  "Action": ["s3:GetObject"],
-                  "Resource": ["arn:aws:s3:::%s/*"]
-                }
-              ]
-            }
-            """.formatted(bucketName);
-        minioClient.setBucketPolicy(
-            io.minio.SetBucketPolicyArgs.builder().bucket(bucketName).config(policy).build());
+      if (!found) {
+        minioClient.makeBucket(
+            io.minio.MakeBucketArgs.builder().bucket(bucketName).build());
       }
 
       try (InputStream inputStream = file.getInputStream()) {
@@ -64,15 +74,37 @@ public class FileStorageService {
                 .build());
       }
 
-      // Retorna URL pública acessível pelo navegador (localhost)
-      // Usando localhost:9000 assumindo que o mapeamento de porta é 9000:9000
-      // Se estiver rodando em produção, isso deve ser configurável via variável de
-      // ambiente
-      return "http://localhost:9000/" + bucketName + "/" + objectName;
+      return objectName;
     } catch (Exception e) {
-      e.printStackTrace(); // Log do stack trace para depuração
+      log.error("Erro no upload", e);
       throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
           "Erro ao fazer upload da imagem: " + e.getMessage(), e);
+    }
+  }
+
+  /**
+   * Gera uma URL pré-assinada temporária (30 minutos) para visualização do
+   * arquivo.
+   */
+  public String generatePresignedUrl(String objectName) {
+    try {
+      if (objectName == null || objectName.isBlank()) {
+        return null;
+      }
+
+      String url = signerClient.getPresignedObjectUrl(
+          GetPresignedObjectUrlArgs.builder()
+              .method(Method.GET)
+              .bucket(bucketName)
+              .object(objectName)
+              .expiry(30, TimeUnit.MINUTES)
+              .build());
+
+      return url;
+
+    } catch (Exception e) {
+      log.error("Erro ao gerar URL para: {}", objectName, e);
+      return null;
     }
   }
 }

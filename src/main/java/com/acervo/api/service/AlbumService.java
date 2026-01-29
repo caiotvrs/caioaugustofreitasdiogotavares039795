@@ -65,12 +65,30 @@ public class AlbumService {
 
     @Transactional
     public AlbumResponseDTO uploadCover(Long id, MultipartFile file) {
+        if (file.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Arquivo vazio.");
+        }
+
+        // Validação de tamanho (ex: 5MB)
+        if (file.getSize() > 5 * 1024 * 1024) {
+            throw new ResponseStatusException(HttpStatus.PAYLOAD_TOO_LARGE,
+                    "O arquivo excede o tamanho máximo de 5MB.");
+        }
+
+        // Validação de tipo (apenas imagens)
+        String contentType = file.getContentType();
+        if (contentType == null || !contentType.startsWith("image/")) {
+            throw new ResponseStatusException(HttpStatus.UNSUPPORTED_MEDIA_TYPE,
+                    "Apenas arquivos de imagem são permitidos.");
+        }
+
         Album album = albumRepository.findById(id)
                 .orElseThrow(
                         () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Álbum não encontrado com id: " + id));
 
-        String coverUrl = fileStorageService.upload(file, "covers");
-        album.setCoverUrl(coverUrl);
+        // Upload retorna a chave (caminho) do arquivo
+        String objectKey = fileStorageService.upload(file, "covers");
+        album.setCoverUrl(objectKey);
 
         return albumMapper.toDTO(albumRepository.save(album));
     }
