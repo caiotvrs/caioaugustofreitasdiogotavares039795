@@ -75,6 +75,13 @@
 			<version>8.5.7</version>
 		</dependency>
 
+		<!-- Observabilidade (Actuator) -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+
+
 		<!-- limite de req-->
 		<dependency>
 			<groupId>com.giffing.bucket4j.spring.boot.starter</groupId>

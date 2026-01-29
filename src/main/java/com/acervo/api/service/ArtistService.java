@@ -23,18 +23,22 @@ public class ArtistService {
     private final ArtistRepository repository;
     private final ArtistMapper mapper;
 
+    // get
     @Transactional(readOnly = true)
     public Page<ArtistResponseDTO> findAll(String name, ArtistType type, Pageable pageable) {
         Specification<Artist> spec = ArtistSpecs.withFilter(name, type);
         return repository.findAll(spec, pageable).map(mapper::toDTO);
     }
 
+    // create
     @Transactional
     public ArtistResponseDTO create(ArtistRequestDTO dto) {
         Artist artist = mapper.toEntity(dto);
-        return mapper.toDTO(repository.save(artist));
+        ArtistResponseDTO response = mapper.toDTO(repository.save(artist));
+        return response;
     }
 
+    // update
     @Transactional
     public ArtistResponseDTO update(Long id, ArtistRequestDTO dto) {
         Artist artist = repository.findById(id)

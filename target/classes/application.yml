@@ -32,3 +32,38 @@ logging:
     org.springframework.web: INFO
     org.hibernate: INFO
     com.acervo.api: DEBUG
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: when-authorized
+      probes:
+        enabled: true
+  health:
+    livenessState:
+      enabled: true
+    readinessState:
+      enabled: true
+  info:
+    env:
+      enabled: true
+
+info:
+  app:
+    name: 'acervo seplag'
+    description: 'Acervo de músicas SEPLAG - API'
+    version: '0.0.1-SNAPSHOT'
+    encoding: 'UTF-8'
+    java:
+      version: '21.0.9'
+
+springdoc:
+  swagger-ui:
+    groups-order: DESC
+    tags-sorter: alpha
+    operations-sorter: alpha

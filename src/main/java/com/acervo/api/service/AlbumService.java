@@ -44,7 +44,8 @@ public class AlbumService {
         Set<Artist> artists = fetchArtists(dto.getArtistIds());
         album.setArtists(artists);
 
-        return albumMapper.toDTO(albumRepository.save(album));
+        AlbumResponseDTO response = albumMapper.toDTO(albumRepository.save(album));
+        return response;
     }
 
     @Transactional
