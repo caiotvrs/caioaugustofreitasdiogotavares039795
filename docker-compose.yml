@@ -71,7 +71,7 @@ services:
             TEST_USER_PASSWORD: Seplag@2026
 
             # Rate Limiting
-            RATE_LIMIT_REQUESTS_PER_MINUTE: 150
+            RATE_LIMIT_REQUESTS_PER_MINUTE: 10
             RATE_LIMIT_MESSAGE: "banido: não tenha muita pressa, gafanhoto"
 
             # External API
