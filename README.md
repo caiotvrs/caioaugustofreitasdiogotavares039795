@@ -143,7 +143,7 @@ docker compose run --rm test-runner
 
 | Serviço | Porta Interna | Porta Exposta | Credenciais Default |
 |---------|---------------|---------------|---------------------|
-| API | 8080 | 8080 | - |
+| API | 8080 | 8080 | Definidos no docker-compose |
 | Postgres | 5432 | 5432 | User/Pass definidos docker-compose |
 | MinIO API | 9000 | 9000 | minioadmin / minioadmin |
 | MinIO Console | 9001 | 9001 | minioadmin / minioadmin |
