@@ -17,34 +17,42 @@ import org.springframework.context.annotation.Configuration;
 @Slf4j
 public class MinioConfig {
 
-    @Value("${minio.endpoint}")
-    private String endpoint;
+    private final String endpoint;
+    private final String accessKey;
+    private final String secretKey;
+    private final String bucketName;
+    private final MinioClient minioClient;
 
-    @Value("${minio.access-key}")
-    private String accessKey;
+    public MinioConfig(
+            @Value("${minio.endpoint}") String endpoint,
+            @Value("${minio.access-key}") String accessKey,
+            @Value("${minio.secret-key}") String secretKey,
+            @Value("${minio.bucket-name}") String bucketName) {
 
-    @Value("${minio.secret-key}")
-    private String secretKey;
+        this.endpoint = endpoint;
+        this.accessKey = accessKey;
+        this.secretKey = secretKey;
+        this.bucketName = bucketName;
 
-    @Value("${minio.bucket-name}")
-    private String bucketName;
-
-    @Bean
-    public MinioClient minioClient() {
-        return MinioClient.builder()
+        // Criar MinioClient no construtor para evitar referência circular
+        this.minioClient = MinioClient.builder()
                 .endpoint(endpoint)
                 .credentials(accessKey, secretKey)
                 .build();
     }
 
+    @Bean
+    public MinioClient minioClient() {
+        return minioClient;
+    }
+
     @PostConstruct
     public void initBucket() {
         try {
-            MinioClient client = minioClient();
-            boolean found = client.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build());
+            boolean found = minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build());
             if (!found) {
                 log.info("Bucket '{}' não encontrado. Criando...", bucketName);
-                client.makeBucket(MakeBucketArgs.builder().bucket(bucketName).build());
+                minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucketName).build());
 
                 // Criando politica de RO
                 String policy = """
@@ -61,7 +69,7 @@ public class MinioConfig {
                         }
                         """.formatted(bucketName);
 
-                client.setBucketPolicy(SetBucketPolicyArgs.builder()
+                minioClient.setBucketPolicy(SetBucketPolicyArgs.builder()
                         .bucket(bucketName)
                         .config(policy)
                         .build());
