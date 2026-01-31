@@ -43,6 +43,7 @@ public class SecurityConfig {
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/actuator/**", "/v1/actuator/**").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                        .requestMatchers("/ws/**").permitAll() // WebSocket
                         .requestMatchers(HttpMethod.GET, "/v1/**").permitAll()
 
                         // Protegido (escrita)

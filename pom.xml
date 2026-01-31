@@ -107,6 +107,12 @@
 			<version>0.9.1</version> <!-- Compatible with Boot 3 -->
 		</dependency>
 
+		<!-- WebSocket -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-websocket</artifactId>
+		</dependency>
+
 		<!-- Testes -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
