@@ -67,3 +67,10 @@ springdoc:
     groups-order: DESC
     tags-sorter: alpha
     operations-sorter: alpha
+
+integration:
+  regionais:
+    base-url: https://integrador-argus-api.geia.vip
+    timeout:
+      connect: 5000
+      read: 10000
