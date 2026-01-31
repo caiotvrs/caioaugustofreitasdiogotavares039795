@@ -46,13 +46,38 @@ services:
         ports:
             - "8080:8080"
         environment:
+            # Database
             DB_URL: jdbc:postgresql://postgres:5432/acervodb
             DB_USERNAME: seplag
             DB_PASSWORD: Seplag@123
+
+            # MinIO
             MINIO_ENDPOINT: http://172.16.20.85:9000
             MINIO_ACCESS_KEY: minioadmin
             MINIO_SECRET_KEY: minioadmin
             MINIO_BUCKET_NAME: acervo-covers
+
+            # JWT
+            JWT_SECRET_KEY: c2VwbGFnLXNlY3JldC1rZXktZm9yLWp3dC1zaWduaW5nLW11c3QtYmUtYXQtbGVhc3QtMjU2LWJpdHMtbG9uZw==
+            JWT_EXPIRATION_MS: 300000
+            JWT_REFRESH_EXPIRATION_MS: 1800000
+
+            # CORS
+            CORS_ALLOWED_ORIGINS: http://localhost:8080,http://localhost:3000
+            CORS_ALLOWED_METHODS: GET,POST,PUT,DELETE,OPTIONS
+
+            # Test User
+            TEST_USER_USERNAME: admin
+            TEST_USER_PASSWORD: Seplag@2026
+
+            # Rate Limiting
+            RATE_LIMIT_REQUESTS_PER_MINUTE: 150
+            RATE_LIMIT_MESSAGE: "banido: não tenha muita pressa, gafanhoto"
+
+            # External API
+            REGIONAL_API_BASE_URL: https://integrador-argus-api.geia.vip
+            REGIONAL_API_CONNECT_TIMEOUT: 5000
+            REGIONAL_API_READ_TIMEOUT: 10000
         depends_on:
             postgres:
                 condition: service_healthy
@@ -60,6 +85,17 @@ services:
                 condition: service_healthy
         networks:
             - acervo-network
+
+    test-runner:
+        image: maven:3.9-eclipse-temurin-17-alpine
+        container_name: acervo_test_runner
+        working_dir: /app
+        volumes:
+            - .:/app
+            - ~/.m2:/root/.m2
+        command: sh -c "mvn clean test"
+        profiles:
+            - test
 
 networks:
     acervo-network:
