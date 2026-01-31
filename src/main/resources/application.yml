@@ -74,3 +74,19 @@ integration:
     timeout:
       connect: 5000
       read: 10000
+
+security:
+  jwt:
+    secret-key: ${JWT_SECRET_KEY:c2VwbGFnLXNlY3JldC1rZXktZm9yLWp3dC1zaWduaW5nLW11c3QtYmUtYXQtbGVhc3QtMjU2LWJpdHMtbG9uZw==}
+    expiration-ms: 300000 # 5 minutos
+    refresh-expiration-ms: 1800000  # 30 minutos
+  cors:
+    allowed-origins: http://localhost:8080,http://localhost:3000
+    allowed-methods: GET,POST,PUT,DELETE,OPTIONS
+  test-user:
+    username: admin
+    password: Seplag@2026
+
+rate-limit:
+  requests-per-minute: 150
+  message: "banido: não tenha muita pressa, gafanhoto"
