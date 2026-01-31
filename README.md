@@ -163,6 +163,5 @@ docker compose run --rm test-runner
 
 ### Falha no upload de imagens
 **Solução**: Verifique se a variavel `MINIO_ENDPOINT` no `docker-compose.yml` está configurada corretamente com o IP do seu computador. 
----
 
-**Desenvolvido com ☕ e 🎵 **
+**Desenvolvido com ☕ e 🎵**
