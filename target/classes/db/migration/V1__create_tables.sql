@@ -14,7 +14,9 @@ CREATE TABLE albums (
 CREATE TABLE regionals (
     id BIGSERIAL PRIMARY KEY,
     nome VARCHAR(255) NOT NULL,
-    ativo BOOLEAN NOT NULL DEFAULT TRUE
+    ativo BOOLEAN NOT NULL DEFAULT TRUE,
+    external_id BIGINT,
+    CONSTRAINT uk_regional_external_id UNIQUE (external_id)
 );
 
 CREATE TABLE album_artist (
@@ -25,12 +27,8 @@ CREATE TABLE album_artist (
     CONSTRAINT fk_album_artist_artist FOREIGN KEY (artist_id) REFERENCES artists (id)
 );
 
-
-
-
-
-
-
-
+-- Index
 CREATE INDEX idx_artist_name ON artists(name);
 CREATE INDEX idx_album_title ON albums(title);
+CREATE INDEX idx_regional_external_id ON regionals(external_id);
+CREATE INDEX idx_regional_ativo ON regionals(ativo);

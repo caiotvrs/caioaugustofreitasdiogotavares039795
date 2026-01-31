@@ -4,6 +4,7 @@ import com.acervo.api.domain.Album;
 import com.acervo.api.dto.AlbumRequestDTO;
 import com.acervo.api.dto.AlbumResponseDTO;
 import com.acervo.api.dto.ArtistResponseDTO;
+import com.acervo.api.service.FileStorageService;
 import org.springframework.stereotype.Component;
 
 import java.util.Set;
@@ -13,9 +14,11 @@ import java.util.stream.Collectors;
 public class AlbumMapper {
 
     private final ArtistMapper artistMapper;
+    private final FileStorageService fileStorageService;
 
-    public AlbumMapper(ArtistMapper artistMapper) {
+    public AlbumMapper(ArtistMapper artistMapper, FileStorageService fileStorageService) {
         this.artistMapper = artistMapper;
+        this.fileStorageService = fileStorageService;
     }
 
     public Album toEntity(AlbumRequestDTO dto) {
@@ -37,11 +40,16 @@ public class AlbumMapper {
                 .map(artistMapper::toDTO)
                 .collect(Collectors.toSet());
 
+        String presignedCoverUrl = null;
+        if (entity.getCoverUrl() != null && !entity.getCoverUrl().isBlank()) {
+            presignedCoverUrl = fileStorageService.generatePresignedUrl(entity.getCoverUrl());
+        }
+
         return AlbumResponseDTO.builder()
                 .id(entity.getId())
                 .title(entity.getTitle())
                 .year(entity.getYear())
-                .coverUrl(entity.getCoverUrl())
+                .coverUrl(presignedCoverUrl)
                 .artists(artistDTOs)
                 .build();
     }

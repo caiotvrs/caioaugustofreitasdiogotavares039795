@@ -1,0 +1,5 @@
+com/acervo/api/security/JwtTokenProviderTest.class
+com/acervo/api/service/AlbumServiceTest.class
+com/acervo/api/service/AuthServiceTest.class
+com/acervo/api/service/RegionalSyncServiceTest.class
+com/acervo/api/service/ArtistServiceTest.class

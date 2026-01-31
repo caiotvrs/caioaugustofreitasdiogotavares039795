@@ -34,13 +34,25 @@ public class AlbumController {
             @RequestParam(required = false) Integer releaseYear,
             @RequestParam(required = false) Integer page,
             @RequestParam(required = false) Integer size,
-            @RequestParam(required = false, defaultValue = "title") String sort) {
+            @io.swagger.v3.oas.annotations.Parameter(description = "Campo para ordenação (title, year, id)") @RequestParam(required = false, defaultValue = "title") String sort,
+            @io.swagger.v3.oas.annotations.Parameter(description = "Direção da ordenação", schema = @io.swagger.v3.oas.annotations.media.Schema(allowableValues = {
+                    "ASC", "DESC" })) @RequestParam(required = false, defaultValue = "ASC") String direction) {
+
+        // Validar e converter direção
+        Sort.Direction sortDirection;
+        try {
+            sortDirection = Sort.Direction.fromString(direction.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            sortDirection = Sort.Direction.ASC; // Fallback para ASC se inválido
+        }
 
         Pageable pageable;
         if (page != null && size != null) {
-            pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, sort));
+            pageable = PageRequest.of(page, size, Sort.by(sortDirection, sort));
         } else {
-            pageable = Pageable.unpaged(Sort.by(Sort.Direction.ASC, sort));
+            // Quando não há paginação, usar página 0 com tamanho "infinito" para garantir
+            // ordenação
+            pageable = PageRequest.of(0, Integer.MAX_VALUE, Sort.by(sortDirection, sort));
         }
 
         return service.findAll(artistName, artistType, releaseYear, pageable);
@@ -63,7 +75,7 @@ public class AlbumController {
         return service.update(id, dto);
     }
 
-    @PatchMapping(value = "/{id}/capa", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/{id}/capa", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Upload de capa", description = "Faz upload da capa do álbum.")
     @ApiResponse(responseCode = "200", description = "Capa atualizada")
     @ApiResponse(responseCode = "404", description = "Álbum não encontrado")

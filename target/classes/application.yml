@@ -22,7 +22,7 @@ spring:
     baseline-on-migrate: true
 
 minio:
-  endpoint: ${MINIO_ENDPOINT:http://localhost:9000}
+  endpoint: ${MINIO_ENDPOINT}
   access-key: ${MINIO_ACCESS_KEY:minioadmin}
   secret-key: ${MINIO_SECRET_KEY:minioadmin}
   bucket-name: ${MINIO_BUCKET_NAME:acervo-covers}
@@ -32,3 +32,61 @@ logging:
     org.springframework.web: INFO
     org.hibernate: INFO
     com.acervo.api: DEBUG
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: when-authorized
+      probes:
+        enabled: true
+  health:
+    livenessState:
+      enabled: true
+    readinessState:
+      enabled: true
+  info:
+    env:
+      enabled: true
+
+info:
+  app:
+    name: 'acervo seplag'
+    description: 'Acervo de músicas SEPLAG - API'
+    version: '0.0.1-SNAPSHOT'
+    encoding: 'UTF-8'
+    java:
+      version: '21.0.9'
+
+springdoc:
+  swagger-ui:
+    groups-order: DESC
+    tags-sorter: alpha
+    operations-sorter: alpha
+
+integration:
+  regionais:
+    base-url: ${REGIONAL_API_BASE_URL:https://integrador-argus-api.geia.vip}
+    timeout:
+      connect: ${REGIONAL_API_CONNECT_TIMEOUT:5000}
+      read: ${REGIONAL_API_READ_TIMEOUT:10000}
+
+security:
+  jwt:
+    secret-key: ${JWT_SECRET_KEY:c2VwbGFnLXNlY3JldC1rZXktZm9yLWp3dC1zaWduaW5nLW11c3QtYmUtYXQtbGVhc3QtMjU2LWJpdHMtbG9uZw==}
+    expiration-ms: ${JWT_EXPIRATION_MS:300000} # 5 minutos (padrão)
+    refresh-expiration-ms: ${JWT_REFRESH_EXPIRATION_MS:1800000}  # 30 minutos (padrão)
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:8080,http://localhost:3000}
+    allowed-methods: ${CORS_ALLOWED_METHODS:GET,POST,PUT,DELETE,OPTIONS}
+  test-user:
+    username: ${TEST_USER_USERNAME:admin}
+    password: ${TEST_USER_PASSWORD:Seplag@2026}
+
+rate-limit:
+  requests-per-minute: ${RATE_LIMIT_REQUESTS_PER_MINUTE:150}
+  message: ${RATE_LIMIT_MESSAGE:"Não tenha muita pressa, gafanhoto"}

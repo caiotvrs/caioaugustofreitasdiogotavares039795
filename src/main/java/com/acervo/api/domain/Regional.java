@@ -9,8 +9,6 @@ import lombok.*;
 // Algumas regras de negócio:
 // - O nome não pode ser vazio
 // - O regional é obrigatório
-// - O regional pode ter vários artistas
-// - O regional pode ter vários álbuns
 
 @Entity
 @Table(name = "regionals")
@@ -25,6 +23,9 @@ public class Regional {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "external_id", unique = true)
+    private Long externalId;
 
     @NotBlank(message = "Não pode ser vazio")
     @Column(nullable = false)
