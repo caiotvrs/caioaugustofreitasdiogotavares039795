@@ -1,0 +1,30 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+
+security:
+  jwt:
+    secret-key: dGVzdC1zZWNyZXQta2V5LWZvci11bml0LXRlc3RzLW11c3QtYmUtYXQtbGVhc3QtMjU2LWJpdHMtbG9uZw==
+    expiration-ms: 60000
+    refresh-expiration-ms: 120000
+  test-user:
+    username: testuser
+    password: testpass
+  cors:
+    allowed-origins: http://localhost:3000
+    allowed-methods: GET,POST,PUT,DELETE
+
+rate-limit:
+  requests-per-minute: 1000
+  message: "test rate limit"
+
+minio:
+  url: http://localhost:9000
+  access-key: minioadmin
+  secret-key: minioadmin
+  bucket-name: test-bucket

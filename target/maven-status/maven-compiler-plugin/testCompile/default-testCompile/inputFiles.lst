@@ -1,0 +1,5 @@
+/app/src/test/java/com/acervo/api/service/ArtistServiceTest.java
+/app/src/test/java/com/acervo/api/service/AlbumServiceTest.java
+/app/src/test/java/com/acervo/api/service/AuthServiceTest.java
+/app/src/test/java/com/acervo/api/service/RegionalSyncServiceTest.java
+/app/src/test/java/com/acervo/api/security/JwtTokenProviderTest.java

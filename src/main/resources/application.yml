@@ -89,4 +89,4 @@ security:
 
 rate-limit:
   requests-per-minute: ${RATE_LIMIT_REQUESTS_PER_MINUTE:150}
-  message: ${RATE_LIMIT_MESSAGE:banido: não tenha muita pressa, gafanhoto}
+  message: ${RATE_LIMIT_MESSAGE:"Não tenha muita pressa, gafanhoto"}

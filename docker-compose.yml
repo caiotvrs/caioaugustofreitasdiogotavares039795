@@ -52,7 +52,7 @@ services:
             DB_PASSWORD: Seplag@123
 
             # MinIO
-            MINIO_ENDPOINT: http://172.16.20.85:9000
+            MINIO_ENDPOINT: http://172.16.20.85:9000 #altere para seu IP para as imagens serem acessiveis na WEB
             MINIO_ACCESS_KEY: minioadmin
             MINIO_SECRET_KEY: minioadmin
             MINIO_BUCKET_NAME: acervo-covers
